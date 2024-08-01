@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 async function handleLogin() {
   console.log("Login Button Clicked");
-  window.location.href = 'http://localhost:3000/login';
+  window.location.href = '/api/login';
 }
 
 export default function Login() {
