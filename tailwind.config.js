@@ -9,6 +9,9 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+    fontFamily: {
+      'sans': ['ui-sans-serif', 'system-ui'],
+    },
     container: {
       center: true,
       padding: "2rem",

@@ -23,17 +23,6 @@ const extractPlaylistData = (apiResponse) => {
   }));
 }
 
-const insertPlaylistData = async (playlists) => {
-  const { data, error } = await supabase
-    .from('playlists') // replace with your table name
-    .insert(playlists);
-
-  if (error) {
-    console.error('Error inserting data:', error);
-  } else {
-    console.log('Data inserted successfully:', data);
-  }
-};
 
 async function showPlaylists() {
   let accessToken = localStorage.getItem('access_token');
@@ -50,10 +39,8 @@ async function showPlaylists() {
         offset: 0,
       }
     });
-    let items = response.data.items;
-    const playlists = extractPlaylistData(items);
-    await insertPlaylistData(playlists);
-    console.log(response.data.items);
+    console.log(response.data);
+    console.log("response data is: ", response.data.items);
   } catch (error) {
     console.error('Error fetching the tracks in your playlist', error);
   }
@@ -74,8 +61,8 @@ export default function Test() {
   return (
     <>
       <div className="m-5 p-10">
-        <h1>Playlist</h1>
-        <Button onClick={showPlaylists}>Show my Playlists</Button>
+        <h1 className="m-5">Welcome to your Dashboard</h1>
+        <Button className="bg-gray-200 rounded-md m-5" onClick={showPlaylists}>Show my Playlists</Button>
       </div>
     </>
   )

@@ -1,73 +1,76 @@
-'use client'
-
-import { useEffect, useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { cookies } from 'next/headers';
+import axios from 'axios';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { redirect } from 'next/navigation';
 
-import { createClient } from '@supabase/supabase-js';
+async function fetchPlaylists(accessToken) {
+  try {
+    const response = await axios({
+      method: 'get',
+      url: 'https://api.spotify.com/v1/me/playlists',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      params: {
+        limit: 50,
+        offset: 0,
+      }
+    });
 
-const supabaseUrl = 'https://bggkcjhqetwpugypahcb.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnZ2tjamhxZXR3cHVneXBhaGNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI0NDM4MjYsImV4cCI6MjAzODAxOTgyNn0.KtcTzCVf2tqr8I0Nvp6QV5f-2ltzCfIo_DpjhuV4AcM';
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-const fetchPlaylists = async () => {
-  const { data, error } = await supabase.from('playlists').select('*');
-
-  if (error) {
-    console.error('Error fetching playlists', error);
+    console.log("response data is: ", response.data.items);
+    return response.data.items;
+  } catch (error) {
+    console.error("Error fetching playlists", error);
     return [];
   }
-
-  return data;
 }
 
-export default function Playlists() {
-  const [playlists, setPlaylists] = useState([]);
 
-  useEffect(() => {
-    const getPlaylists = async () => {
-      const data = await fetchPlaylists();
-      setPlaylists(data);
-    }
-    getPlaylists();
-  }, []);
-  
+export default async function PlaylistsPage() {
+
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get('spotify_access_token')?.value;
+
+  if (!accessToken) {
+    redirect('/login');
+  }
+
+  const playlists = accessToken ? await fetchPlaylists(accessToken) : [];
+
   return (
-    <>
-      <div className="p-20">
-        <h1>My Playlists</h1>
-        {playlists.length === 0 ? (
-          <p>No playlists found</p>
-        ) : (
-          <div className="flex flex-wrap gap-4">
-            {playlists.map((playlist) => (
-              <Card className="w-[350px]" key={playlist.id}>
-                <CardHeader>
-                  <CardTitle className="h-[50px]">{playlist.name}</CardTitle>
-                  {/* <CardDescription className="h-[30px]">{playlist.description}</CardDescription> */}
+    <div className="p-20">
+      {playlists.length === 0 ? (
+        <div>No Playlists found</div>
+      ) : (
+        <div className="flex flex-row flex-wrap items-center justify-center gap-4">
+          {playlists.map((playlist) => (
+            <div key={playlist.id}>
+              <Card className="bg-zinc-300 opacity-90 h-96 w-80">
+                <CardHeader className="mx-auto">
+                  <CardTitle className="text-lg truncate overflow-hidden whitespace-nowrap">{playlist.name}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <img className="p-2" src={playlist.image_url} alt={playlist.name} style={{ width: '300px', height: '300px', objectFit: 'cover' }} />
-                  <p className="p-2">Owner: {playlist.owner_display_name}</p>
-                </CardContent>
+                <div>
+                  <CardContent>
+                    <img className="h-52 w-52 mx-auto" src={playlist.images[0].url} alt={playlist.name} />
+                  </CardContent>
+                </div>
                 <CardFooter>
-                  <Button className="p-4">
-                    <a href={playlist.spotify_url}>Listen on Spotify</a>
-                  </Button>
+                  {/* <Button className="bg-gray-50 mx-auto" onClick={handleRedirect(playlist.external_urls.spotify)}>Open in Spotify</Button> */}
+                    <a
+                      href={playlist.external_urls.spotify}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-gray-50 mx-auto px-4 py-2 rounded-md"
+                    >
+                      Open in Spotify
+                    </a>
                 </CardFooter>
               </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    </>
-  )
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

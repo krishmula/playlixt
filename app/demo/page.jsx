@@ -1,8 +1,12 @@
+'use client';
+
+import Navbar from '@/components/navbar';
+
 export default function Demo() {
   return (
     <>
       <div>
-        <h1></h1>
+        <Navbar />
       </div>
     </>
   )

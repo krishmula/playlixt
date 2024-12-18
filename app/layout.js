@@ -1,7 +1,9 @@
 import { Inter } from "next/font/google";
+import { Noto_Serif } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const notoSerif = Noto_Serif({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Playlixt",

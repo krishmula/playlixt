@@ -44,7 +44,7 @@ export async function GET(request) {
       cookies().set('spotify_refresh_token', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', path: '/' });
 
 
-      return NextResponse.redirect('http://localhost:3000/test?' + querystring.stringify({ access_token: accessToken, refresh_token: refreshToken }));
+      return NextResponse.redirect('http://localhost:3000/playlists?' + querystring.stringify({ access_token: accessToken, refresh_token: refreshToken }));
     } catch (error) {
       console.error('Error in /callback:', error.response ? error.response.data : error.message);
       return NextResponse.redirect('/#' + querystring.stringify({ error: 'invalid_token' }));
