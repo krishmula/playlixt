@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import axios from 'axios';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
+import { DataTable } from '@/components/data-table';
 
 async function fetchPlaylists(accessToken) {
   try {
@@ -26,6 +26,24 @@ async function fetchPlaylists(accessToken) {
   }
 }
 
+export const columns = [
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "service",
+    header: "Service",
+  },
+  {
+    accessorKey: "noOfTracks",
+    header: "Tracks",
+  },
+  {
+    accessorKey: "owner",
+    header: "Owner",
+  },
+];
 
 export default async function PlaylistsPage() {
 
@@ -40,23 +58,27 @@ export default async function PlaylistsPage() {
 
   return (
     <div className="p-20">
-      {playlists.length === 0 ? (
-        <div>No Playlists found</div>
-      ) : (
-        <div className="flex flex-row flex-wrap items-center justify-center gap-4">
-          {playlists.map((playlist) => (
-            <div key={playlist.id}>
-              <Card className="bg-zinc-300 opacity-90 h-96 w-80">
-                <CardHeader className="mx-auto">
-                  <CardTitle className="text-lg truncate overflow-hidden whitespace-nowrap">{playlist.name}</CardTitle>
-                </CardHeader>
-                <div>
-                  <CardContent>
-                    <img className="h-52 w-52 mx-auto" src={playlist.images[0].url} alt={playlist.name} />
-                  </CardContent>
-                </div>
-                <CardFooter>
-                  {/* <Button className="bg-gray-50 mx-auto" onClick={handleRedirect(playlist.external_urls.spotify)}>Open in Spotify</Button> */}
+      <div>
+        {playlists.length === 0 ? (
+          <div>No Playlists found</div>
+        ) : (
+          <div className="flex flex-row flex-wrap items-center justify-center gap-4">
+            {playlists.map((playlist) => (
+              <div key={playlist.id}>
+                <Card className="bg-zinc-100 opacity-90 h-[420px] w-80">
+                  <CardHeader className="mx-auto">
+                    <CardTitle className="text-lg truncate overflow-hidden whitespace-nowrap">{playlist.name}</CardTitle>
+                    <CardDescription>
+                      <div>Number of Tracks: {playlist.tracks.total}</div>
+                      <div>Owner: {playlist.owner.display_name}</div>
+                    </CardDescription>
+                  </CardHeader>
+                  <div>
+                    <CardContent>
+                      <img className="h-52 w-52 mx-auto" src={playlist.images[0].url} alt={playlist.name} />
+                    </CardContent>
+                  </div>
+                  <CardFooter>
                     <a
                       href={playlist.external_urls.spotify}
                       target="_blank"
@@ -65,12 +87,16 @@ export default async function PlaylistsPage() {
                     >
                       Open in Spotify
                     </a>
-                </CardFooter>
-              </Card>
-            </div>
-          ))}
-        </div>
-      )}
+                  </CardFooter>
+                </Card>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {/* <div> */}
+      {/*   <DataTable data={playlists} columns={columns} /> */}
+      {/* </div> */}
     </div>
   );
 }

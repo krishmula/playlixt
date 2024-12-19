@@ -1,48 +1,37 @@
-import Link from "next/link";
-//
-export default function Navbar() {
+import React from 'react';
+import Link from 'next/link';
+import { Home, Settings, User } from 'lucide-react';
+
+const Navbar = () => {
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-          <Link
-            href="#"
-            className="flex items-center gap-2 text-lg font-semibold md:text-base"
-          >
-            <span className="sr-only">Playlixt Inc.</span>
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo */}
+        <Link href="/" className="text-2xl font-bold text-blue-600">
+          Playlixt
+        </Link>
+
+        {/* Navigation Links */}
+        <div className="flex items-center space-x-6">
+          <Link href="/" className="flex items-center space-x-1 hover:text-blue-600 transition">
+            <Home size={20} />
+            <span className="hidden md:inline">Home</span>
           </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Dashboard
+          
+          <Link href="/settings" className="flex items-center space-x-1 hover:text-blue-600 transition">
+            <Settings size={20} />
+            <span className="hidden md:inline">Settings</span>
           </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Orders
+          
+          {/* Account Avatar/Profile */}
+          <Link href="/account" className="flex items-center space-x-1 hover:text-blue-600 transition">
+            <User size={20} />
+            <span className="hidden md:inline">Account</span>
           </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Products
-          </Link>
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Customers
-          </Link>
-          <Link
-            href="#"
-            className="text-foreground transition-colors hover:text-foreground"
-          >
-            Settings
-          </Link>
-        </nav>
-      </header>
-    </div>
-  )
-}
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
