@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { getAccessToken } from './utils/spotify';
-import { cookies } from 'next/headers';
 
 export async function middleware(request) {
-  const accessToken = cookies().get('spotify_access_token')?.value;
-
+  const accessToken = request.cookies.get('spotify_access_token')?.value;
+  
   if (!accessToken) {
-    return NextResponse.redirect('/login');
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   try {
@@ -19,16 +18,18 @@ export async function middleware(request) {
     if (error.response && error.response.status === 401) {
       console.log('Access Token Expired. Refreshing...');
       try {
-        const newAccessToken = await getAccessToken();
-        cookies().set('spotify_access_token', newAccessToken, { httpOnly: true, secure: true, sameSite: 'Strict', path: '/' });
-        return NextResponse.next();
+        const { accessToken: newAccessToken, response } = await getAccessToken(request);
+        return response;
       } catch (refreshError) {
         console.error('Error refreshing access token:', refreshError);
-        return NextResponse.redirect('/login');
+        return NextResponse.redirect(new URL('/login', request.url));
       }
     } else {
       console.error('Error in middleware:', error);
-      return NextResponse.status(500).json({ error: 'Failed to authenticate with Spotify' });
+      return NextResponse.json(
+        { error: 'Failed to authenticate with Spotify' },
+        { status: 500 }
+      );
     }
   }
 }
@@ -36,4 +37,3 @@ export async function middleware(request) {
 export const config = {
   matcher: ['/protected-route', '/another-protected-route']
 };
-

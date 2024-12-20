@@ -1,15 +1,8 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import axios from "axios";
 import { cookies } from "next/headers";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { redirect } from "next/navigation";
+import PlaylistSelector from "@/components/playlist-selector";
+import { getAccessToken } from "../utils/spotify";
 
 
 async function fetchPlaylists(accessToken) {
@@ -38,6 +31,7 @@ export default async function Convert() {
   const cookieStore = cookies();
   const accessToken = cookieStore.get('spotify_access_token')?.value;
 
+
   if (!accessToken) {
     redirect('/login');
   }
@@ -46,50 +40,7 @@ export default async function Convert() {
 
   return (
     <main className="ml-96 min-h-screen flex justify-center">
-      <div className="flex flex-col space-y-8 items-center w-full max-w-md px-4">
-        <div className="text-center w-full">
-          <h1 className="text-2xl font-extrabold mb-4">
-            What playlist are we converting today?
-          </h1>
-          <div className="flex justify-center">
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select the Playlist" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Playlists</SelectLabel>
-                  {playlists.map((playlist) => (
-                    <SelectItem key={playlist.id} value={playlist.name}>{playlist.name}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="text-center w-full">
-          <h1 className="text-2xl font-extrabold mb-4">
-            What service are we converting it to?
-          </h1>
-          <div className="flex justify-center">
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select the Service" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Service</SelectLabel>
-                  <SelectItem value="spotify">Spotify</SelectItem>
-                  <SelectItem value="appleMusic">Apple Music</SelectItem>
-                  <SelectItem value="ytMusic">Youtube Music</SelectItem>
-                  <SelectItem value="soundcloud">Soundcloud</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <PlaylistSelector playlists={playlists} />
     </main>
   );
 }
