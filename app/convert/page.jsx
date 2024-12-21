@@ -1,22 +1,19 @@
 import axios from "axios";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import PlaylistSelector from "@/components/playlist-selector";
-import { getAccessToken } from "../utils/spotify";
-
 
 async function fetchPlaylists(accessToken) {
   try {
     const response = await axios({
-      method: 'get',
-      url: 'https://api.spotify.com/v1/me/playlists',
+      method: "get",
+      url: "https://api.spotify.com/v1/me/playlists",
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       params: {
         limit: 50,
         offset: 0,
-      }
+      },
     });
 
     console.log("response data is: ", response.data.items);
@@ -28,14 +25,8 @@ async function fetchPlaylists(accessToken) {
 }
 
 export default async function Convert() {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get('spotify_access_token')?.value;
-
-
-  if (!accessToken) {
-    redirect('/login');
-  }
-
+  const headersList = headers();
+  const accessToken = headersList.get("x-spotify-token");
   const playlists = accessToken ? await fetchPlaylists(accessToken) : [];
 
   return (

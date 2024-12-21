@@ -1,10 +1,9 @@
-import { Inter } from "next/font/google";
-import { Noto_Serif } from "next/font/google";
+import { Inter, Noto_Serif } from "next/font/google";
 import "./globals.css";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 const notoSerif = Noto_Serif({ subsets: ["latin"] });
 
 export const metadata = {
@@ -21,7 +20,7 @@ export default function RootLayout({ children }) {
           <main>
             <SidebarTrigger />
             {children}
-            </main>
+          </main>
         </SidebarProvider>
       </body>
     </html>

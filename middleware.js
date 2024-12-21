@@ -1,39 +1,49 @@
-import { NextResponse } from 'next/server';
-import axios from 'axios';
-import { getAccessToken } from './utils/spotify';
+import { NextResponse } from "next/server";
+import axios from "axios";
+import { getAccessToken } from "./app/utils/spotify";
 
 export async function middleware(request) {
-  const accessToken = request.cookies.get('spotify_access_token')?.value;
-  
+  const accessToken = request.cookies.get("spotify_access_token")?.value;
+  // get the access token from the intercepted requests cookies.
+
   if (!accessToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
+  // if accessToken isn't present, redirect to login page.
 
   try {
-    await axios.get('https://api.spotify.com/v1/me', {
-      headers: { 'Authorization': `Bearer ${accessToken}` }
+    // call spotify api using accessToken to check if it's valid.
+    await axios.get("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
-    return NextResponse.next();
+
+    // pass the accessToken to the destination component via headers.
+    const response = NextResponse.next();
+    response.headers.set("x-spotify-token", accessToken);
+
+    return response;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      console.log('Access Token Expired. Refreshing...');
+      // the accessToken has expired, and is going to be refreshed.
       try {
-        const { accessToken: newAccessToken, response } = await getAccessToken(request);
+        const { accessToken: newAccessToken, response } =
+          await getAccessToken(request);
+        response.headers.set("x-spotify-token", newAccessToken);
         return response;
       } catch (refreshError) {
-        console.error('Error refreshing access token:', refreshError);
-        return NextResponse.redirect(new URL('/login', request.url));
+        // there was an error refreshing the accessToken. So, we redirect to login page.
+        return NextResponse.redirect(new URL("/login", request.url));
       }
     } else {
-      console.error('Error in middleware:', error);
+      // there is an error in the middleware, so we throw this error.
       return NextResponse.json(
-        { error: 'Failed to authenticate with Spotify' },
-        { status: 500 }
+        { error: "Failed to authenticate with Spotify" },
+        { status: 500 },
       );
     }
   }
 }
 
 export const config = {
-  matcher: ['/protected-route', '/another-protected-route']
+  matcher: ["/convert"],
 };

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Navbar from '@/components/navbar';
+import Navbar from "@/components/navbar";
 
 export default function Demo() {
   return (
@@ -9,5 +9,5 @@ export default function Demo() {
         <Navbar />
       </div>
     </>
-  )
+  );
 }

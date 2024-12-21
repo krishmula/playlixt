@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Select,
@@ -10,14 +10,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useState } from "react";
 import { SiYoutubemusic } from "react-icons/si";
 import { SiApplemusic } from "react-icons/si";
 import { SiSpotify } from "react-icons/si";
 import { SiSoundcloud } from "react-icons/si";
 import { SelectItemIndicator, SelectItemText } from "@radix-ui/react-select";
-
 
 export default function PlaylistSelector({ playlists }) {
   const [selectedPlaylist, setSelectedPlaylist] = useState({});
@@ -38,7 +43,9 @@ export default function PlaylistSelector({ playlists }) {
               <SelectGroup>
                 <SelectLabel>Playlists</SelectLabel>
                 {playlists.map((playlist) => (
-                  <SelectItem key={playlist.id} value={playlist}>{playlist.name}</SelectItem>
+                  <SelectItem key={playlist.id} value={playlist}>
+                    {playlist.name}
+                  </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -46,25 +53,29 @@ export default function PlaylistSelector({ playlists }) {
         </div>
       </div>
 
-      {selectedPlaylist && selectedPlaylist.images && selectedPlaylist.images.length > 0 && (
-        <div>
-          <h3>The Chosen Playlist is</h3>
-          <Card className="p-4">
-            <CardHeader>
-              <CardTitle>
-                {selectedPlaylist.name}
-              </CardTitle>
-              <CardDescription>
-                <div>Number of Tracks: {selectedPlaylist.tracks.total}</div>
-                <div>Owner: {selectedPlaylist.owner.display_name}</div>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <img className="w-52 l-52" src={selectedPlaylist.images[0].url} alt={selectedPlaylist.name} />
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {selectedPlaylist &&
+        selectedPlaylist.images &&
+        selectedPlaylist.images.length > 0 && (
+          <div>
+            <h3>The Chosen Playlist is</h3>
+            <Card className="p-4">
+              <CardHeader>
+                <CardTitle>{selectedPlaylist.name}</CardTitle>
+                <CardDescription>
+                  <div>Number of Tracks: {selectedPlaylist.tracks.total}</div>
+                  <div>Owner: {selectedPlaylist.owner.display_name}</div>
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <img
+                  className="w-52 l-52"
+                  src={selectedPlaylist.images[0].url}
+                  alt={selectedPlaylist.name}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
       <div className="text-center w-full">
         <h1 className="text-2xl font-extrabold mb-4">

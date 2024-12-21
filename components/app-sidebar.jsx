@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
@@ -12,7 +12,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -26,8 +26,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { NavUser } from "./nav-user"
+} from "@/components/ui/sidebar";
+import { NavUser } from "./nav-user";
 
 const data = {
   user: {
@@ -52,14 +52,12 @@ const data = {
       icon: Map,
     },
   ],
-}
+};
 
 export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        Playlixt
-      </SidebarHeader>
+      <SidebarHeader>Playlixt</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -84,6 +82,5 @@ export function AppSidebar() {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
-
