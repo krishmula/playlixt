@@ -1,5 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import {
+  SiYoutubemusic,
+  SiApplemusic,
+  SiSpotify,
+  SiSoundcloud,
+} from "react-icons/si";
 import {
   Select,
   SelectContent,
@@ -8,21 +15,15 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/select.jsx";
+import { Button } from "@/components/ui/button.jsx";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useState } from "react";
-import { SiYoutubemusic } from "react-icons/si";
-import { SiApplemusic } from "react-icons/si";
-import { SiSpotify } from "react-icons/si";
-import { SiSoundcloud } from "react-icons/si";
-import { SelectItemIndicator, SelectItemText } from "@radix-ui/react-select";
+} from "@/components/ui/card.jsx";
 
 export default function PlaylistSelector({ playlists }) {
   const [selectedPlaylist, setSelectedPlaylist] = useState({});
