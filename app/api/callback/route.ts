@@ -14,14 +14,16 @@ export async function GET(request) {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
 
-  const storedState = cookies().get("spotify_auth_state")?.value;
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get("spotify_auth_state")?.value;
 
   if (state === null || state !== storedState) {
     return NextResponse.redirect(
       "/#" + querystring.stringify({ error: "state_mismatch" }),
     );
   } else {
-    cookies().delete("spotify_auth_state");
+    const cookieStore = await cookies();
+    cookieStore.delete("spotify_auth_state");
 
     try {
       const tokenResponse = await axios.post(
@@ -42,21 +44,25 @@ export async function GET(request) {
       );
 
       const accessToken = tokenResponse.data.access_token;
+      console.log("accessToken in api/callback is: ", accessToken);
       const refreshToken = tokenResponse.data.refresh_token;
+      console.log("refreshToken in api/callback is: ", refreshToken);
 
       // Set cookies
-      // setTokens(accessToken, refreshToken);
-      cookies().set("spotify_access_token", accessToken, {
+      const cookieStore = await cookies();
+      cookieStore.set("spotify_access_token", accessToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "Strict",
+        secure: false, // Disabled for local development
+        sameSite: "lax",
         path: "/",
+        maxAge: 3600, // 1 hour
       });
-      cookies().set("spotify_refresh_token", refreshToken, {
+      cookieStore.set("spotify_refresh_token", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "Strict",
+        secure: false, // Disabled for local development
+        sameSite: "lax",
         path: "/",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
       });
 
       return NextResponse.redirect(
@@ -66,10 +72,14 @@ export async function GET(request) {
             refresh_token: refreshToken,
           }),
       );
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as {
+        response?: { data: { error: string } };
+        message?: string;
+      };
       console.error(
         "Error in /callback:",
-        error.response ? error.response.data : error.message,
+        err.response ? err.response.data : err.message,
       );
       return NextResponse.redirect(
         "/#" + querystring.stringify({ error: "invalid_token" }),

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import querystring from "querystring";
 
-const generateRandomString = (length) => {
+const generateRandomString = (length: number) => {
   let text = "";
   const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   for (let i = 0; i < length; i++) {
@@ -16,7 +16,8 @@ export async function GET() {
   const scope =
     "user-library-read user-read-private user-read-email playlist-modify-public playlist-read-private playlist-read-collaborative playlist-modify-private";
 
-  cookies().set("spotify_auth_state", state, { maxAge: 3600 });
+  const cookieStore = await cookies();
+  cookieStore.set("spotify_auth_state", state, { maxAge: 3600 });
 
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;

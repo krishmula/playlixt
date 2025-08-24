@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { AiOutlineSpotify } from "react-icons/ai";
 import { SiYoutubemusic } from "react-icons/si";
 
@@ -21,10 +20,10 @@ export default function Home() {
           <p className="text-3xl text-zinc">Look at your Spotify Playlists</p>
         </div>
         <div className="pl-20 pr-20 pb-20">
-          <Button onClick={handleLogin} className="bg-black text-white">
+          <button onClick={handleLogin} className="bg-black text-white">
             <AiOutlineSpotify className="mr-2 h-7 w-7" />
             Login to Spotify
-          </Button>
+          </button>
         </div>
       </div>
       <div>
@@ -34,10 +33,10 @@ export default function Home() {
           </p>
         </div>
         <div className="pl-20 pr-20 pb-20">
-          <Button onClick={handleYtLogin} className="bg-black text-white">
+          <button onClick={handleYtLogin} className="bg-black text-white">
             <SiYoutubemusic className="mr-2 h-7 w-7" />
             Login to YT Music
-          </Button>
+          </button>
         </div>
       </div>
     </div>
