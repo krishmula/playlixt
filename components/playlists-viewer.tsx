@@ -14,6 +14,17 @@ interface PlaylistsViewerType {
   source: string;
 }
 
+interface Playlist {
+  id: string;
+  name: string;
+  link?: string;
+}
+
+interface PlaylistsResponse {
+  spotify: Playlist[];
+  ytmusic: Playlist[];
+}
+
 export default function PlaylistsViewer({ source }: PlaylistsViewerType) {
   const selectedSpotify = usePlaylistStore(
     (state) => state.selectedSpotifyPlaylist,
@@ -21,11 +32,17 @@ export default function PlaylistsViewer({ source }: PlaylistsViewerType) {
   const setSpotify = usePlaylistStore(
     (state) => state.setSelectedSpotifyPlaylist,
   );
+  const setSpotifyName = usePlaylistStore(
+    (state) => state.setSpotifyPlaylistName,
+  );
   const selectedYtMusic = usePlaylistStore(
     (state) => state.selectedYtMusicPlaylist,
   );
   const setYtMusic = usePlaylistStore(
     (state) => state.setSelectedYtMusicPlaylist,
+  );
+  const setYtMusicName = usePlaylistStore(
+    (state) => state.setYtMusicPlaylistName,
   );
   const [playlists, setPlaylists] = useState<PlaylistsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +72,13 @@ export default function PlaylistsViewer({ source }: PlaylistsViewerType) {
             value={selectedSpotify}
             onValueChange={(value) => {
               setSpotify(value);
+              // Find the selected playlist and set its name
+              const selectedPlaylist = playlists.spotify.find(
+                (pl: Playlist) => (pl.link || pl.id) === value,
+              );
+              if (selectedPlaylist) {
+                setSpotifyName(selectedPlaylist.name);
+              }
             }}
           >
             <SelectTrigger className="px-4 py-2 rounded border w-full">
@@ -62,7 +86,7 @@ export default function PlaylistsViewer({ source }: PlaylistsViewerType) {
             </SelectTrigger>
             <SelectContent>
               {playlists.spotify.map((pl) => (
-                <SelectItem key={pl.id} value={pl.link}>
+                <SelectItem key={pl.id} value={pl.link || pl.id}>
                   {pl.name}
                 </SelectItem>
               ))}
@@ -80,6 +104,13 @@ export default function PlaylistsViewer({ source }: PlaylistsViewerType) {
             value={selectedYtMusic}
             onValueChange={(value) => {
               setYtMusic(value);
+              // Find the selected playlist and set its name
+              const selectedPlaylist = playlists.ytmusic.find(
+                (pl: Playlist) => pl.id === value,
+              );
+              if (selectedPlaylist) {
+                setYtMusicName(selectedPlaylist.name);
+              }
             }}
           >
             <SelectTrigger className="px-4 py-2 rounded border w-full">

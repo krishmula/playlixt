@@ -7,7 +7,7 @@ console.log("CLIENT_ID", CLIENT_ID);
 console.log("REDIRECT_URI", encodeURIComponent(REDIRECT_URI));
 
 const SCOPE = [
-  "https://www.googleapis.com/auth/youtube.readonly",
+  "https://www.googleapis.com/auth/youtube",
   "openid",
   "profile",
   "email",

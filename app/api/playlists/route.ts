@@ -14,7 +14,6 @@ async function getAccessToken() {
 export async function GET() {
   try {
     const spotifyPlaylists = await fetchSpotifyPlaylists();
-    console.log("spotifyPlaylists is: ", spotifyPlaylists);
     const ytmusicPlaylists = await fetchYtMusicPlaylists();
     return NextResponse.json({
       spotify: spotifyPlaylists,

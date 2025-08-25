@@ -5,6 +5,10 @@ type PlaylistStore = {
   setSelectedSpotifyPlaylist: (playlist: string | null) => void;
   selectedYtMusicPlaylist: string | null;
   setSelectedYtMusicPlaylist: (playlist: string | null) => void;
+  spotifyPlaylistName: string | null;
+  setSpotifyPlaylistName: (name: string | null) => void;
+  ytMusicPlaylistName: string | null;
+  setYtMusicPlaylistName: (name: string | null) => void;
 };
 
 export const usePlaylistStore = create<PlaylistStore>((set) => ({
@@ -14,4 +18,8 @@ export const usePlaylistStore = create<PlaylistStore>((set) => ({
   selectedYtMusicPlaylist: null,
   setSelectedYtMusicPlaylist: (playlist) =>
     set({ selectedYtMusicPlaylist: playlist }),
+  spotifyPlaylistName: null,
+  setSpotifyPlaylistName: (name) => set({ spotifyPlaylistName: name }),
+  ytMusicPlaylistName: null,
+  setYtMusicPlaylistName: (name) => set({ ytMusicPlaylistName: name }),
 }));

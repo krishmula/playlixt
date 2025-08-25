@@ -1,7 +1,11 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 
-interface SpotifyPlaylistRaw {}
+interface SpotifyPlaylistRaw {
+  id: string;
+  name: string;
+  href: string;
+}
 
 interface YTMusicPlaylistRaw {
   id: string;
@@ -11,6 +15,7 @@ interface YTMusicPlaylistRaw {
 type Playlist = {
   id: string;
   name: string;
+  link?: string;
 };
 
 export async function fetchSpotifyPlaylists(): Promise<Playlist[]> {
@@ -29,7 +34,11 @@ export async function fetchSpotifyPlaylists(): Promise<Playlist[]> {
       },
     );
     const items: SpotifyPlaylistRaw[] = response.data.items;
-    return items.map((pl) => ({ id: pl.id, name: pl.name, link: pl.href }));
+    return items.map((pl) => ({
+      id: pl.id,
+      name: pl.name,
+      link: `https://api.spotify.com/v1/playlists/${pl.id}/tracks`,
+    }));
   } catch (error: any) {
     console.error(
       "Error fetching Spotify playlists",
@@ -61,7 +70,6 @@ export async function fetchYtMusicPlaylists(): Promise<Playlist[]> {
       throw new Error(`YouTube API error: ${response.status}`);
     }
     const data = await response.json();
-    console.log("ytmusic resp data is: ", data);
     const items =
       data.items?.map(
         (playlist: { id: string; snippet: { title: string } }) => ({
