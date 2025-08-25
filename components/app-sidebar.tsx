@@ -2,16 +2,10 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
+  Home as HomeIcon,
   Settings2,
-  SquareTerminal,
+  Map,
+  Repeat,
 } from "lucide-react";
 
 import {
@@ -38,8 +32,13 @@ const data = {
   projects: [
     {
       name: "Home",
-      url: "#",
-      icon: Frame,
+      url: "/",
+      icon: HomeIcon,
+    },
+    {
+      name: "Convert",
+      url: "/convert",
+      icon: Repeat,
     },
     {
       name: "Settings",
@@ -56,8 +55,8 @@ const data = {
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>Playlixt</SidebarHeader>
+    <Sidebar collapsible="icon" variant="floating">
+      <SidebarHeader className="truncate overflow-hidden transition-all duration-200 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:-mt-8">Playlixt</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>

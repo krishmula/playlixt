@@ -120,29 +120,28 @@ export default async function PlaylistsPage() {
   const playlists: SpotifyPlaylist[] = await fetchPlaylists(accessToken, refreshToken);
 
   return (
-    <div className="w-full px-6 py-8">
-      <div className="min-h-screen">
+    <div className="min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] px-6 py-8">
         {playlists.length === 0 ? (
           <div className="flex items-center justify-center h-64">
-            <p className="text-lg text-gray-500">No Playlists found</p>
+            <p className="text-lg text-[var(--muted-foreground)]">No Playlists found</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {playlists.map((playlist) => (
               <div key={playlist.id} className="flex justify-center">
-                <Card className="w-full bg-zinc-100/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 ease-in-out">
+                <Card className="w-full bg-[var(--card)]/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 ease-in-out">
                   <CardHeader className="px-6">
-                    <CardTitle className="text-xl font-semibold truncate overflow-hidden whitespace-nowrap mb-2">
+                    <CardTitle className="text-xl font-semibold truncate overflow-hidden whitespace-nowrap mb-2 text-[var(--foreground)]">
                       {playlist.name}
                     </CardTitle>
                     <CardDescription className="space-y-1.5">
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-[var(--muted-foreground)]">
                         <span className="font-medium">
                           {playlist.tracks.total}
                         </span>{" "}
                         tracks
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-[var(--muted-foreground)]">
                         By{" "}
                         <span className="font-medium">
                           {playlist.owner.display_name}
@@ -167,7 +166,7 @@ export default async function PlaylistsPage() {
                       href={playlist.external_urls.spotify}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-2.5 rounded-full bg-green-500 hover:bg-green-600 text-white font-medium transition-colors duration-200"
+                      className="inline-flex items-center px-6 py-2.5 rounded-full bg-[var(--secondary)] hover:bg-[color-mix(in srgb,var(--secondary),#000 20%)] text-[var(--secondary-foreground)] font-medium transition-colors duration-200"
                     >
                       Open in Spotify
                     </a>
@@ -178,9 +177,5 @@ export default async function PlaylistsPage() {
           </div>
         )}
       </div>
-      {/* <div> */}
-      {/*   <DataTable data={playlists} columns={columns} /> */}
-      {/* </div> */}
-    </div>
   );
 }

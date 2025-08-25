@@ -15,15 +15,15 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select.jsx";
-import { Button } from "@/components/ui/button.jsx";
+} from "./ui/select";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card.jsx";
+} from "./ui/card";
+import { Button } from "./ui/button";
 
 export default function PlaylistSelector({ playlists }) {
   const [selectedPlaylist, setSelectedPlaylist] = useState({});

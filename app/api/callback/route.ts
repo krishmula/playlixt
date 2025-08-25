@@ -44,9 +44,7 @@ export async function GET(request) {
       );
 
       const accessToken = tokenResponse.data.access_token;
-      console.log("accessToken in api/callback is: ", accessToken);
       const refreshToken = tokenResponse.data.refresh_token;
-      console.log("refreshToken in api/callback is: ", refreshToken);
 
       // Set cookies
       const cookieStore = await cookies();
