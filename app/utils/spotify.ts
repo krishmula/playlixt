@@ -1,12 +1,13 @@
 import axios from "axios";
 import querystring from "querystring";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
 export async function getAccessToken() {
-  const cookieStore = request.cookies;
+  const cookieStore = await cookies();
   const refreshToken = cookieStore.get("spotify_refresh_token")?.value;
 
   if (!refreshToken) {
@@ -41,7 +42,7 @@ export async function getAccessToken() {
     nextResponse.cookies.set("spotify_access_token", accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "Strict",
+      sameSite: "strict",
       path: "/",
       maxAge: 3600,
     });
@@ -50,7 +51,7 @@ export async function getAccessToken() {
       accessToken,
       response: nextResponse,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Error refreshing access token:",
       error.response ? error.response.data : error.message,
@@ -60,14 +61,14 @@ export async function getAccessToken() {
 }
 
 // helper function to save both tokens at once.
-export function setTokens(accessToken, refreshToken) {
+export function setTokens(accessToken: string, refreshToken: string) {
   const response = NextResponse.next();
 
   // Set access token cookie
   response.cookies.set("spotify_access_token", accessToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "Strict",
+    sameSite: "strict",
     path: "/",
     maxAge: 3600, // 1 hour expiry for access token
   });
@@ -76,7 +77,7 @@ export function setTokens(accessToken, refreshToken) {
   response.cookies.set("spotify_refresh_token", refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "Strict",
+    sameSite: "strict",
     path: "/",
     maxAge: 30 * 24 * 60 * 60, // 30 days expiry for refresh token
   });

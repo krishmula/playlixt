@@ -33,16 +33,34 @@ export default function Convert() {
   const [source, setSource] = useState<string>("");
   const [target, setTarget] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const spotifyPlaylisttt = usePlaylistStore(
+  const spotifyPlaylist = usePlaylistStore(
     (state) => state.selectedSpotifyPlaylist,
   );
-  const ytMusicPlaylisttt = usePlaylistStore(
+  const ytMusicPlaylist = usePlaylistStore(
     (state) => state.selectedYtMusicPlaylist,
   );
+  const setSelectedSpotifyPlaylist = usePlaylistStore(
+    (state) => state.setSelectedSpotifyPlaylist,
+  );
+  const setSelectedYtMusicPlaylist = usePlaylistStore(
+    (state) => state.setSelectedYtMusicPlaylist,
+  );
 
-  const handleConvert = () => {
+  const handleConvert = async () => {
+    if (!source || !target || source === target) {
+      setStatus("Please select different source and target platforms");
+      return;
+    }
+
+    const sourcePlaylist = source === "spotify" ? spotifyPlaylist : ytMusicPlaylist;
+    if (!sourcePlaylist) {
+      setStatus("Please select a playlist to convert");
+      return;
+    }
+
     setStatus("Converting playlist...");
-    async function convertPlaylist() {
+    
+    try {
       const resPlaylist = await fetch("/api/convert", {
         method: "POST",
         headers: {
@@ -51,16 +69,30 @@ export default function Convert() {
         body: JSON.stringify({
           source: source,
           destination: target,
-          source_playlist: spotifyPlaylisttt,
+          source_playlist: sourcePlaylist,
         }),
       });
-      console.log("resPlaylist is: ", resPlaylist);
-    }
 
-    convertPlaylist();
-    setTimeout(() => {
+      if (!resPlaylist.ok) {
+        const errorData = await resPlaylist.json();
+        setStatus(`Error: ${errorData.error || 'Failed to convert playlist'}`);
+        return;
+      }
+
+      const data = await resPlaylist.json();
+      console.log("Playlist data:", data);
       setStatus("Conversion complete!");
-    }, 2000);
+    } catch (error) {
+      console.error("Conversion error:", error);
+      setStatus("Error: Failed to convert playlist");
+    }
+  };
+
+  const handleSourceChange = (val: string) => {
+    setSource(val);
+    // Clear the selected playlist when source changes
+    setSelectedSpotifyPlaylist(null);
+    setSelectedYtMusicPlaylist(null);
   };
 
   return (
@@ -71,10 +103,7 @@ export default function Convert() {
           <Label className="block mb-2 font-semibold">Source Platform</Label>
           <Select
             value={source}
-            onValueChange={(val) => {
-              setSource(val);
-              setSelectedPlaylist("");
-            }}
+            onValueChange={handleSourceChange}
           >
             <SelectTrigger className="px-4 py-2 rounded border">
               <SelectValue placeholder="Select Source" />
@@ -100,8 +129,8 @@ export default function Convert() {
       </div>
       {source && <PlaylistsViewer source={source} />}
       <button
-        className="px-8 py-4 rounded-lg shadow transition text-lg font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[color-mix(in srgb,var(--primary),#000 20%)] mb-4"
-        // disabled={!source || !target || !selectedPlaylist || source === target}
+        className="px-8 py-4 rounded-lg shadow transition text-lg font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[color-mix(in srgb,var(--primary),#000 20%)] mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!source || !target || source === target || !(source === "spotify" ? spotifyPlaylist : ytMusicPlaylist)}
         onClick={handleConvert}
       >
         Convert Playlist
