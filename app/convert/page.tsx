@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -9,27 +9,55 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import {
-  fetchSpotifyPlaylists,
-  fetchYtMusicPlaylists,
-} from "../utils/playlists";
 import PlaylistsViewer from "@/components/playlists-viewer";
+import { usePlaylistStore } from "@/store/playlistStore";
 
 type Playlist = {
   id: string;
   name: string;
 };
 
+type SpotifyPlaylist = {
+  id: string;
+  name: string;
+  link: string;
+};
+
+type YtMusicPlaylist = {
+  id: string;
+  name: string;
+  link: string;
+};
+
 export default function Convert() {
-  const [source, setSource] = React.useState<string>("");
-  const [target, setTarget] = React.useState<string>("");
-  const [playlists, setPlaylists] = React.useState<Playlist[]>([]);
-  const [selectedPlaylist, setSelectedPlaylist] = React.useState<string>("");
-  const [status, setStatus] = React.useState<string>("");
+  const [source, setSource] = useState<string>("");
+  const [target, setTarget] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const spotifyPlaylisttt = usePlaylistStore(
+    (state) => state.selectedSpotifyPlaylist,
+  );
+  const ytMusicPlaylisttt = usePlaylistStore(
+    (state) => state.selectedYtMusicPlaylist,
+  );
 
   const handleConvert = () => {
     setStatus("Converting playlist...");
-    // TODO: Implement conversion logic
+    async function convertPlaylist() {
+      const resPlaylist = await fetch("/api/convert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          source: source,
+          destination: target,
+          source_playlist: spotifyPlaylisttt,
+        }),
+      });
+      console.log("resPlaylist is: ", resPlaylist);
+    }
+
+    convertPlaylist();
     setTimeout(() => {
       setStatus("Conversion complete!");
     }, 2000);
@@ -73,7 +101,7 @@ export default function Convert() {
       {source && <PlaylistsViewer source={source} />}
       <button
         className="px-8 py-4 rounded-lg shadow transition text-lg font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[color-mix(in srgb,var(--primary),#000 20%)] mb-4"
-        disabled={!source || !target || !selectedPlaylist || source === target}
+        // disabled={!source || !target || !selectedPlaylist || source === target}
         onClick={handleConvert}
       >
         Convert Playlist

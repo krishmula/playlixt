@@ -1,9 +1,7 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 
-interface SpotifyPlaylistRaw {
-
-}
+interface SpotifyPlaylistRaw {}
 
 interface YTMusicPlaylistRaw {
   id: string;
@@ -18,8 +16,6 @@ type Playlist = {
 export async function fetchSpotifyPlaylists(): Promise<Playlist[]> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("spotify_access_token");
-  // const accessToken = getCookie("spotify_access_token");
-  console.log("Spotify access token from cookie:", accessToken);
   if (!accessToken) {
     console.error("No Spotify access token found in cookies.");
     return [];
@@ -33,8 +29,7 @@ export async function fetchSpotifyPlaylists(): Promise<Playlist[]> {
       },
     );
     const items: SpotifyPlaylistRaw[] = response.data.items;
-    console.log("Fetched Spotify playlists:", items);
-    return items.map((pl) => ({ id: pl.id, name: pl.name }));
+    return items.map((pl) => ({ id: pl.id, name: pl.name, link: pl.href }));
   } catch (error: any) {
     console.error(
       "Error fetching Spotify playlists",
@@ -47,8 +42,6 @@ export async function fetchSpotifyPlaylists(): Promise<Playlist[]> {
 export async function fetchYtMusicPlaylists(): Promise<Playlist[]> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("ytmusic_access_token");
-  // const accessToken = getCookie("ytmusic_access_token");
-  console.log("YTMusic access token from cookie:", accessToken);
   if (!accessToken) {
     console.error("No YTMusic access token found in cookies.");
     return [];
@@ -62,18 +55,20 @@ export async function fetchYtMusicPlaylists(): Promise<Playlist[]> {
           Authorization: `Bearer ${accessToken.value}`,
           Accept: "application/json",
         },
-      }
+      },
     );
     if (!response.ok) {
       throw new Error(`YouTube API error: ${response.status}`);
     }
     const data = await response.json();
+    console.log("ytmusic resp data is: ", data);
     const items =
-    data.items?.map((playlist: { id: string; snippet: { title: string } }) => ({
-        id: playlist.id,
-        name: playlist.snippet.title,
-      })) || [];
-    console.log("Fetched YTMusic playlists:", items);
+      data.items?.map(
+        (playlist: { id: string; snippet: { title: string } }) => ({
+          id: playlist.id,
+          name: playlist.snippet.title,
+        }),
+      ) || [];
     return items;
   } catch (error) {
     console.error("Error fetching YTMusic playlists", error);

@@ -8,21 +8,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { usePlaylistStore } from "@/store/playlistStore";
 
-type Playlist = {
-  id: string;
-  name: string;
-};
+interface PlaylistsViewerType {
+  source: string;
+}
 
-type PlaylistsResponse = {
-  spotify: Playlist[];
-  ytmusic: Playlist[];
-};
-
-export default function PlaylistsViewer({ source }: { source: string }) {
+export default function PlaylistsViewer({ source }: PlaylistsViewerType) {
+  const selectedSpotify = usePlaylistStore(
+    (state) => state.selectedSpotifyPlaylist,
+  );
+  const setSpotify = usePlaylistStore(
+    (state) => state.setSelectedSpotifyPlaylist,
+  );
+  const selectedYtMusic = usePlaylistStore(
+    (state) => state.selectedYtMusicPlaylist,
+  );
+  const setYtMusic = usePlaylistStore(
+    (state) => state.setSelectedYtMusicPlaylist,
+  );
   const [playlists, setPlaylists] = useState<PlaylistsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPlaylist, setSelectedPlaylist] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/playlists")
@@ -45,13 +51,18 @@ export default function PlaylistsViewer({ source }: { source: string }) {
           <label className="block mb-2 font-semibold">
             Select Spotify Playlist
           </label>
-          <Select value={selectedPlaylist} onValueChange={setSelectedPlaylist}>
+          <Select
+            value={selectedSpotify}
+            onValueChange={(value) => {
+              setSpotify(value);
+            }}
+          >
             <SelectTrigger className="px-4 py-2 rounded border w-full">
               <SelectValue placeholder="Choose a playlist" />
             </SelectTrigger>
             <SelectContent>
               {playlists.spotify.map((pl) => (
-                <SelectItem key={pl.id} value={pl.id}>
+                <SelectItem key={pl.id} value={pl.link}>
                   {pl.name}
                 </SelectItem>
               ))}
@@ -59,12 +70,18 @@ export default function PlaylistsViewer({ source }: { source: string }) {
           </Select>
         </>
       )}
+      {/* YouTube Music selection can be added here if needed */}
       {source === "ytmusic" && (
         <>
           <label className="block mb-2 font-semibold">
-            Select YouTube Music Playlist
+            Select Youtube Music Playlist
           </label>
-          <Select value={selectedPlaylist} onValueChange={setSelectedPlaylist}>
+          <Select
+            value={selectedYtMusic}
+            onValueChange={(value) => {
+              setYtMusic(value);
+            }}
+          >
             <SelectTrigger className="px-4 py-2 rounded border w-full">
               <SelectValue placeholder="Choose a playlist" />
             </SelectTrigger>
@@ -78,9 +95,9 @@ export default function PlaylistsViewer({ source }: { source: string }) {
           </Select>
         </>
       )}
-      {selectedPlaylist && (
-        <div className="mt-4">Selected Playlist ID: {selectedPlaylist}</div>
-      )}
+      {/* {spotifyPlaylist && spotifyPlaylist[0] && ( */}
+      {/*   <div className="mt-4">Selected Playlist: {spotifyPlaylist[0].name}</div> */}
+      {/* )} */}
     </div>
   );
 }
